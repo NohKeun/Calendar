@@ -30,10 +30,7 @@ public class MainActivity extends AppCompatActivity {
     Button saveButton;          // 저장 하는 버튼
     EditText diaryContents;    // 일기내용을 보여주는 에디트텍스트
     String filename;            // 파일명을 저장하는 문자형 변수
-
     View view;
-    String str="";
-    String sdPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         setTitle("일기장 어플리케이션");
 
-        dp = (DatePicker)view.findViewById(R.id.datePicker);
+    //    dp = (DatePicker)view.findViewById(R.id.);
         viewDate = (TextView) findViewById(R.id.viewDate);
         saveButton = (Button) findViewById(R.id.saveButton);
         diaryContents = (EditText) findViewById(R.id.diaryContents);
@@ -50,23 +47,46 @@ public class MainActivity extends AppCompatActivity {
         final File mydiary = new File(strSDpath + "/mydiary"); //mydiary를 추가하기위한  파일객체 생성
         mydiary.mkdir(); //디렉토리 생성
 
-        Calendar cal = Calendar.getInstance();  // 현재 날짜를 받아와서 저장
+        /*앱이 실행되면 TextView에 오늘 날짜가 표시되고, 일기 파일이 존재한다면 읽어서 EditText에 보여준다*/
+        Calendar cal = Calendar.getInstance();  // 오늘 날짜를 받아와서 저장
         int cYar = cal.get(Calendar.YEAR);
         int cMonth = cal.get(Calendar.MONTH);
         int cDay = cal.get(Calendar.DAY_OF_MONTH);
 
         filename = Integer.toString(cYar) + "년" + Integer.toString(cMonth + 1) + "월"
-                + Integer.toString(cDay) + "일.txt";     //초기에 현재날짜의 년,월,일을 임의의 형태의 파일이름으로 저장함
+                + Integer.toString(cDay) + "일.txt";     //오늘날짜의 년,월,일을 임의의 형태의 파일이름으로 저장함
 
-        String str1 = readDiary(filename);  // 파일이름을 읽어옴
+        String str1 = readDiary(filename);  //저장되어 있는 파일이름을 읽어옴
 
         diaryContents.setText(str1);
-        saveButton.setEnabled(true);//읽어온 파일의 내용을 에디트 텍스트에 set함
+        saveButton.setEnabled(true);// 읽어온 파일의 내용을 EditText에 보여준다
 
         viewDate.setText(Integer.toString(cYar) + "년" + Integer.toString(cMonth + 1) + "월"
-                + Integer.toString(cDay) + "일.txt");    //텍스트뷰에 임의의 형태의 날짜 이름으로 바꿔서 보여준다
+                + Integer.toString(cDay) + "일.txt");    //텍스트뷰에 오늘날짜 이름으로 바꿔서 보여준다
+        /*1번 요구사항*/
 
-        saveButton.setOnClickListener(new View.OnClickListener() {
+
+        viewDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                view = (View) View.inflate(MainActivity.this, R.layout.dialog1, null);
+                AlertDialog.Builder dlg = new AlertDialog.Builder(MainActivity.this);
+                dlg.setTitle("날짜 선택");
+                dlg.setView(view);
+                dp = (DatePicker)view.findViewById(R.id.datePicker);
+                dlg.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        str = dp.getYear() + "년_"+(dp.getMonth()+1)+"월_"+dp.getDayOfMonth()+"일";
+                        viewDate.setText(str);
+                        diaryContents.setText(readDiary(str));
+                    }
+                });
+                dlg.show();
+            }
+        });
+
+        saveButton.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View v) {   // 저장버튼 입력시에
                 try {
@@ -107,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
             saveButton.setText("수정하기");
         } catch (IOException e) {
             diaryContents.setHint("일기 없음");
-            saveButton.setText("새로 저장");
+            saveButton.setText("저장");
         }
         return diaryStr;
     }

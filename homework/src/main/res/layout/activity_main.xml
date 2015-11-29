@@ -5,16 +5,18 @@
     tools:context=".MainActivity"
     android:orientation="vertical"
     android:gravity="center_horizontal"
+
     >
     <LinearLayout
         android:orientation="horizontal"
         android:layout_height="wrap_content"
-        android:layout_width="match_parent">
+        android:layout_width="match_parent"
+        android:background="#fffd4b">
 
         <TextView
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            android:text="날짜나올곳"
+            android:text="날짜출력"
             android:layout_weight="1"
             android:id="@+id/edtDiary"/>
 
@@ -32,6 +34,8 @@
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:lines="20"
-        android:id="@+id/contents"/>
+        android:background="#ffffff"
+        android:id="@+id/contents"
+        android:text="일기장 출력"/>
 
 </LinearLayout>

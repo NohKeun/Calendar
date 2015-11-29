@@ -26,26 +26,29 @@ import java.io.OutputStream;
 import java.util.Calendar;
 
 public class MainActivity extends Activity {
-    Button saveBtn;
-    EditText contents;
-    TextView date;
+
     DatePicker dp;
-    View dialogView;
+    TextView viewDate;          // 날짜를 나타내는 텍스트뷰
+    Button saveButton;          // 저장 하는 버튼
+    EditText diaryContents;    // 일기내용을 보여주는 에디트텍스트
+    String filename;            // 파일명을 저장하는 문자형 변수
+    View view;
+
     String str="";
     String sdPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        saveBtn = (Button)findViewById(R.id.btnWrite);
-        contents = (EditText)findViewById(R.id.contents);
-        date = (TextView)findViewById(R.id.edtDiary);
+        setContentView(//R.layout.activity_main);
+        saveButton = (Button)findViewById(R.id.btnWrite);
+        diaryContents = (EditText)findViewById(R.id.contents);
+        viewDate = (TextView)findViewById(R.id.edtDiary);
         //외부저장경로 설정
         sdPath = Environment.getExternalStorageDirectory().getAbsolutePath();
 
         File dir = new File(sdPath+"/mydiary");
-        contents.setText(sdPath);
+        diaryContents.setText(sdPath);
         dir.mkdirs();//디렉토리 생성,이미 존재하면 저절로 통과
 
         //contents.setText(dir.getPath() + " " + Environment.getExternalStorageState());
@@ -56,40 +59,44 @@ public class MainActivity extends Activity {
         int cMonth = cal.get(Calendar.MONTH);
         int cDay = cal.get(Calendar.DAY_OF_MONTH);
         //초기 날짜 세팅
-        date.setText(cYear+"년_"+(cMonth+1)+"월_"+cDay+"일");
+        viewDate.setText(cYear+"년_"+(cMonth+1)+"월_"+cDay+"일");
         //날짜 변경하는 부분
-        date.setOnClickListener(new View.OnClickListener() {
+
+        /*날짜를 표시한 TextView를 터치하면 DatePicker에 잇는 dialog가 나타나고 변경가능.*/
+        viewDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialogView = (View) View.inflate(MainActivity.this, R.layout.dialog1, null);
+                view = (View) View.inflate(MainActivity.this, R.layout.dialog1, null);
                 AlertDialog.Builder dlg = new AlertDialog.Builder(MainActivity.this);
                 dlg.setTitle("날짜 선택");
-                dlg.setView(dialogView);
-                dp = (DatePicker)dialogView.findViewById(R.id.datePicker);
+                dlg.setView(view);
+                dp = (DatePicker)view.findViewById(R.id.datePicker);
                 dlg.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         str = dp.getYear() + "년_"+(dp.getMonth()+1)+"월_"+dp.getDayOfMonth()+"일";
-                        date.setText(str);
-                        contents.setText(readDiary(str));
+                        viewDate.setText(str);
+                        diaryContents.setText(readDiary(str));
                     }
                 });
                 dlg.show();
             }
         });
-        saveBtn.setOnClickListener(new View.OnClickListener() {
+        /*2번 요구사항*/
+
+        saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String title = date.getText().toString().trim()+".txt";
+                String title = viewDate.getText().toString().trim()+".txt";
                 File file = new File(sdPath+title);
                 try {
                     FileOutputStream outFs = new FileOutputStream(file);
-                    String str = contents.getText().toString();
+                    String str = diaryContents.getText().toString();
                     outFs.write(str.getBytes());
                     outFs.close();
                     Toast.makeText(getApplicationContext(), title + "이 저장됨", Toast.LENGTH_SHORT).show();
                 } catch (IOException e) {
-                    Toast.makeText(getApplicationContext(), title + "이 저장안됨", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), title + "이 저장됨", Toast.LENGTH_SHORT).show();
                 }
 
 

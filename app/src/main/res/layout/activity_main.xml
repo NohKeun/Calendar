@@ -34,6 +34,7 @@
         android:layout_width="match_parent"
         android:text="일기장 나오는곳"
         android:lines="20"
-        android:id="@+id/diaryContents"/>
+        android:id="@+id/diaryContents"
+        android:background="#ffffff"/>
 
 </LinearLayout>
